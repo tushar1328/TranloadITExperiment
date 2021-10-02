@@ -9,7 +9,7 @@ from ffmpeg_streaming import S3
 
 
 @shared_task
-def process_streaming_and_upload_to_s3(instance_id, file_url, user_id, ext,file_name):
+def process_streaming_and_upload_to_s3(instance_id, file_url, ext,file_name):
     from streaming.models import Stream
 
     key = urllib3.util.parse_url(file_url)
@@ -28,7 +28,7 @@ def process_streaming_and_upload_to_s3(instance_id, file_url, user_id, ext,file_
     else:
         hls.auto_generate_representations()
         st = 'video'
-    output_url = f'/hlsdemooutput/{user_id}/{file_name}/{random.randint(111111111, 999999999)}/{st}.m3u8'
+    output_url = f'/hlsdemooutput/{random.randint(111111111, 999999999)}/{file_name}/{st}.m3u8'
     hls.output(output_url, clouds=save_to_s3)
     stream = Stream.objects.get(id=instance_id)
     stream.streaming_url = f'https://{settings.AWS_S3_CUSTOM_DOMAIN}{output_url}'

@@ -54,7 +54,6 @@ class Stream(models.Model):
         return f"{self.file.url} || {self.ext} || {self.user}"
 
     def save(self, *args, **kwargs):
-        print(self.file)
         name, extension = os.path.splitext(self.file.name)
         self.ext = extension
         super(Stream, self).save(*args, **kwargs)
@@ -66,7 +65,6 @@ def process_stream(sender, instance, created, **kwargs):
         process_streaming_and_upload_to_s3.delay(
             str(instance.id),
             str(instance.file.url),
-            str(instance.user.id),
             str(instance.ext),
             slugify(instance.file.name.split('.')[0])
         )
