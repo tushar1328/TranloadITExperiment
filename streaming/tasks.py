@@ -18,7 +18,7 @@ def process_streaming_and_upload_to_s3(instance_id, file_url, ext,file_name):
         aws_secret_access_key=f'{settings.AWS_S3_SECRET_ACCESS_KEY}',
         region_name=f'{settings.AWS_S3_REGION}'
     )
-    streaming_file = ffmpeg_streaming.input(s3, bucket_name=f"{settings.AWS_STORAGE_BUCKET_NAME}", key=f"{key.path}")
+    streaming_file = ffmpeg_streaming.input(s3, bucket_name=f"{settings.AWS_STORAGE_BUCKET_NAME}", key=f"{(key.path)[1:]}")
     save_to_s3 = CloudManager().add(s3, bucket_name=f"{settings.AWS_STORAGE_BUCKET_NAME}")
     hls = streaming_file.hls(Formats.h264())
     if ext == ".mp3":
