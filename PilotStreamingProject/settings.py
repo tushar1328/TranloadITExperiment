@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^&yzlk!fn3i2b3l&1dza3+uh_&4v2_!zgd4k$u@mjm3m9p6&1*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 LOGIN_REDIRECT_URL = '/'
 
 # Application definition
@@ -148,3 +148,7 @@ CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_ENABLE_UTC = False
 CELERY_TIMEZONE = "Asia/Kolkata"
+
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
