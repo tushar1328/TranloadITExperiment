@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h1>Home</h1>
+    <div class="py-3">
+    <a class="btn btn-success text-white" type="button" href="{% url "stream:stream_form_create" %}"><i class="fa fa-plus"></i><span class="px-2">Add</span></a>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Uploaded File</th>
+                <th>Extension</th>
+                <th>Stream</th>
+                <th>Operations</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for data in stream %}
+                <tr>
+                    <td>{{ data.file.name }}</td>
+                    <td>{{ data.ext }}</td>
+                    <td>{{ data.streaming_url }}</td>
+                    <td>
+                        <div><a class="btn btn-primary" type="button"><i class="fa fa-pencil"></i>Button</a></div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

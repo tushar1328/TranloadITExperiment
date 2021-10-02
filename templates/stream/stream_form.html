@@ -1,0 +1,10 @@
+{% extends  "base.html" %}
+{% block content %}
+    <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="reset" class="btn btn-warning">Reset</button>
+        <a href="{% url "stream:stream_index" %}" class="btn btn-danger">Cancel</a>
+
+    </form>
+{% endblock %}
