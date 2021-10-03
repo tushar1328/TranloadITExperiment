@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 
 from streaming.tasks import process_streaming_and_upload_to_s3
+from streaming.validators import file_size
 
 User = get_user_model()
 
@@ -22,7 +23,7 @@ class Stream(models.Model):
         primary_key=True,
     )
     file = models.FileField(
-        validators=[validators.FileExtensionValidator(allowed_extensions=['mp3', 'mp4'])],
+        validators=[validators.FileExtensionValidator(allowed_extensions=['mp3', 'mp4']),file_size],
         null=False,
         blank=False,
     )

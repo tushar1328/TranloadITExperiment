@@ -8,17 +8,19 @@
     <title>TranloadITExperiment</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.8/plyr.css" />
     <link rel="stylesheet" href="{% static "assets/css/Navigation-Clean.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/styles.css" %}">
 </head>
 
 <body>
 <nav class="navbar navbar-light navbar-expand-lg navigation-clean">
-    <div class="container-fluid"><a class="navbar-brand" href="#">Company Name</a>
+    <div class="container-fluid"><a class="navbar-brand" href="{% url 'stream:stream_index' %}">Django Boy</a>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav ml-auto">
                 {% if request.user.is_authenticated %}
-                    <li class="nav-item" role="presentation"><a class="nav-link" href="{% url "logout" %}">Logout</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="{% url "logout" %}">Logout</a>
+                    </li>
                 {% else %}
                     <li class="nav-item" role="presentation"><a class="nav-link" href="{% url "login" %}">Login</a></li>
                 {% endif %}
@@ -27,11 +29,12 @@
         </div>
     </div>
 </nav>
-<div class="container">
+<div class="container-fluid">
     {% block content %} {% endblock %}
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

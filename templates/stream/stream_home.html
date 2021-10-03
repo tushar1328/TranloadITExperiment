@@ -2,31 +2,133 @@
 {% load static %}
 {% block content %}
     <h1>Home</h1>
-    <div class="py-3">
-    <a class="btn btn-success text-white" type="button" href="{% url "stream:stream_form_create" %}"><i class="fa fa-plus"></i><span class="px-2">Add</span></a>
+    <div class="row">
+        <div class="col-lg-6">
+            <audio preload="true" id="player" controls crossorigin style="display: none"></audio>
+            <video id="videoplayer" controls crossorigin playsinline style="display: none"></video>
+        </div>
+        <div class="col-lg-6">
+            <div class="py-3">
+                <a class="btn btn-success text-white" type="button" href="{% url "stream:stream_form_create" %}"><i
+                        class="fa fa-plus"></i><span class="px-2">Add</span></a>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Uploaded File</th>
+                        <th>Extension</th>
+                        <th>Stream</th>
+                        <th>Operations</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data in stream %}
+                        <tr>
+                            <td>{{ data.file.name }}</td>
+                            <td>{{ data.ext }}</td>
+
+                            <td> {% if data.streaming_url %}
+                                <button class="btn btn-primary"
+                                        onclick="runStream('{{ data.streaming_url }}','{{ data.ext }}')">Stream
+                                </button>{% endif %}</td>
+                            <td>
+                                <div><a class="btn btn-primary" type="button"><i class="fa fa-pencil"></i>Button</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Uploaded File</th>
-                <th>Extension</th>
-                <th>Stream</th>
-                <th>Operations</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for data in stream %}
-                <tr>
-                    <td>{{ data.file.name }}</td>
-                    <td>{{ data.ext }}</td>
-                    <td>{{ data.streaming_url }}</td>
-                    <td>
-                        <div><a class="btn btn-primary" type="button"><i class="fa fa-pencil"></i>Button</a></div>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <script src="https://cdn.plyr.io/3.6.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/hls.js/latest/hls.js"></script>
+    {#    <script src={% static 'assets/js/main.js' %}></script>#}
+    <script>
+        function callVideo(url) {
+            const video = document.getElementById("videoplayer");
+            const source = url;
+            console.log(video)
+            // For more options see: https://github.com/sampotts/plyr/#options
+            const defaultOptions = {};
+
+            if (Hls.isSupported()) {
+                console.log("Pass")
+                // For more Hls.js options, see https://github.com/dailymotion/hls.js
+                const hls = new Hls();
+                hls.loadSource(source);
+
+                // From the m3u8 playlist, hls parses the manifest and returns
+                // all available video qualities. This is important, in this approach,
+                // we will have one source on the Plyr player.
+                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+
+                    // Transform available levels into an array of integers (height values).
+                    const availableQualities = hls.levels.map((l) => l.height)
+
+                    // Add new qualities to option
+                    defaultOptions.quality = {
+                        default: availableQualities[0],
+                        options: availableQualities,
+                        // this ensures Plyr to use Hls to update quality level
+                        // Ref: https://github.com/sampotts/plyr/blob/master/src/js/html5.js#L77
+                        forced: true,
+                        onChange: (e) => updateQuality(e),
+                    }
+
+                    // Initialize new Plyr player with quality options
+                    const player = new Plyr(video, defaultOptions);
+                });
+                hls.attachMedia(video);
+                window.hls = hls;
+            } else {
+                // default options with no quality update in case Hls is not supported
+                console.log("Failed")
+                const player = new Plyr(video, defaultOptions);
+            }
+
+            function updateQuality(newQuality) {
+                window.hls.levels.forEach((level, levelIndex) => {
+                    if (level.height === newQuality) {
+                        window.hls.currentLevel = levelIndex;
+                    }
+                });
+            }
+        }
+
+        function callAudio(url) {
+            var audio = document.querySelector("#player");
+
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(audio);
+            }
+            Plyr.setup(audio);
+        }
+
+        function runStream(url, ext) {
+            if (ext === ".mp3") {
+                console.log("MP3 Is Called")
+                videoplayer = document.getElementById("videoplayer")
+                videoplayer.style.display = 'none'
+                player = document.getElementById("player")
+                player.style.display = 'block'
+                callAudio(url)
+            } else {
+                console.log("MP4 Is Called")
+                audioplayer = document.getElementById("player")
+                audioplayer.style.display = 'none'
+                player = document.getElementById("videoplayer")
+                player.style.display = 'block'
+                callVideo(url)
+            }
+
+        }
+
+        callVideo('https://hlsexperiment.s3.ap-south-1.amazonaws.com/hlsdemooutput/331746231/samplevideo_1280x720_10mb/stream.m3u8')
+
+    </script>
 {% endblock %}
